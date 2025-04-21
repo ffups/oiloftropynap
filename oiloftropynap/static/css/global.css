@@ -1,0 +1,22 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+    --background-color: #050137;
+    --yellow-innit: #ddff00;
+    --pink-innit: #ff05d1;
+  }
+
+body {
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #222;
+    background: var(--background-color);
+}
+
