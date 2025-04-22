@@ -6,14 +6,28 @@
     <description>Recent content in Home on My New Hugo Site</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 21 Apr 2025 23:46:54 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 22 Apr 2025 00:20:20 +0200</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>contact</title>
+      <link>http://localhost:1313/contact/</link>
+      <pubDate>Tue, 22 Apr 2025 00:20:20 +0200</pubDate>
+      <guid>http://localhost:1313/contact/</guid>
+      <description>&lt;p&gt;ska came before reggae&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>illustrations</title>
+      <link>http://localhost:1313/illustrations/</link>
+      <pubDate>Tue, 22 Apr 2025 00:20:06 +0200</pubDate>
+      <guid>http://localhost:1313/illustrations/</guid>
+      <description>&lt;p&gt;is this my best work yuetetetettt???&lt;/p&gt;</description>
+    </item>
     <item>
       <title>about</title>
       <link>http://localhost:1313/about/</link>
       <pubDate>Mon, 21 Apr 2025 23:46:54 +0200</pubDate>
       <guid>http://localhost:1313/about/</guid>
-      <description>&lt;p&gt;asdasdlkjajsdlakd&#xA;&amp;lsquo;asdasdjafjafznn&lt;/p&gt;</description>
+      <description>&lt;p class=&#34;text&#34;&gt;This is the homepage. Explore my work and get in touch!&lt;/p&gt;&#xA;p</description>
     </item>
   </channel>
 </rss>

@@ -4,10 +4,4 @@ draft = false
 title = 'Home'
 +++
 
-
-Check out my [About page](/about/) or visit [GitHub](https://github.com/).
-
-
-- Project One
-- Project Two
-- Project Three
+<p class="text">This is the homepage. Explore my work and get in touch!</p>
