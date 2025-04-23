@@ -1,8 +1,9 @@
 backend:
-  name: test-repo
+  # name: test-repo
+  name: git-gateway
   branch: main
 
-media_folder: "static/uploads"
+media_folder: "oiloftropynap/static/uploads"
 public_folder: "/uploads"
 
 collections:
@@ -14,7 +15,7 @@ collections:
         name: "home"
         fields:
           - { label: "Body", name: "body", widget: "markdown" }
-      - file: "content/about.html"
+      - file: "oiloftropynap/content/about.html"
         label: "About"
         name: "about"
         fields:
@@ -23,7 +24,7 @@ collections:
           - { label: "Draft", name: "draft", widget: "boolean" }
           - { label: "Custom CSS", name: "custom_css", widget: "string", required: false }
           - { label: "Body", name: "body", widget: "markdown" }
-      - file: "content/contact.html"
+      - file: "oiloftropynap/content/contact.html"
         label: "Contact"
         name: "contact"
         fields:
