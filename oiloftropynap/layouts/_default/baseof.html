@@ -5,23 +5,12 @@
     <title>{{ .Title }}</title>
     {{ partial "head.html" . }}
 </head>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      }
-    });
-  }
-</script>
+
 <body>
     {{ partial "navbar.html" . }}
     {{ block "main" . }}{{ end }}
     {{ block "404" . }}{{ end }}
-    <script src="/js/spa.js"></script>
+    {{ partial "scripts.html" . }}
 </body>
 
 </html>
