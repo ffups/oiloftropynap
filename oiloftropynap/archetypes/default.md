@@ -2,6 +2,6 @@
 date = '{{ .Date }}'
 draft = false
 title = '{{ .File.ContentBaseName }}'
-custom_css = ".css"
+custom_css = "a.css"
 
 +++
