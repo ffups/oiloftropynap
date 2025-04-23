@@ -9,7 +9,7 @@ collections:
   - name: "pages"
     label: "Pages"
     files:
-      - file: "content/_index.md"
+      - file: "content/_index.html"
         label: "Home"
         name: "home"
         fields:
@@ -30,6 +30,12 @@ collections:
       - file: "content/illustrations.html"
         label: "Illustrations"
         name: "illustrations"
+        fields:
+          - { label: "Title", name: "title", widget: "string" }
+          - { label: "Body", name: "body", widget: "markdown" }
+      - file: "content/overview.md"
+        label: "Overview"
+        name: "overview"
         fields:
           - { label: "Title", name: "title", widget: "string" }
           - { label: "Body", name: "body", widget: "markdown" }
