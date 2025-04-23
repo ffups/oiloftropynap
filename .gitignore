@@ -19,3 +19,6 @@
 **/*.log
 # Local Netlify folder
 .netlify
+
+# webp conversion
+**/cwebp.exe
