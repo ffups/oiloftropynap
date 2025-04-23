@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-    <title>contact</title>
+    <title>Contact</title>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/css/global.css">
@@ -12,7 +12,8 @@
 </head>
 
 <body>
-    <nav class="navbar">
+    <main>
+        <nav class="navbar">
   <ul class="navbar-list navbar-text">
     <li><a class="navbar-single" href="/">Showreel</a></li>
     <li><a class="navbar-single" href="/about/">About Me</a></li>
@@ -22,14 +23,25 @@
     <li><a class="navbar-single" href="/skaadsdasd/">skabadabadas</a></li>
   </ul>
 </nav>
-    
+        
       
-<main>
-    <p class="text">hesllo this is shmontact</p>
-</main>
+<p class="text">hesllo this is shmontact</p>
 
-    
-    <script src="/js/spa.js"></script>
+        
+        <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+<script src="/js/spa.js"></script>
+    </main>
 </body>
 
 </html>

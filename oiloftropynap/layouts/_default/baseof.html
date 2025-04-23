@@ -7,10 +7,12 @@
 </head>
 
 <body>
-    {{ partial "navbar.html" . }}
-    {{ block "main" . }}{{ end }}
-    {{ block "404" . }}{{ end }}
-    {{ partial "scripts.html" . }}
+    <main>
+        {{ partial "navbar.html" . }}
+        {{ block "main" . }}{{ end }}
+        {{ block "404" . }}{{ end }}
+        {{ partial "scripts.html" . }}
+    </main>
 </body>
 
 </html>
