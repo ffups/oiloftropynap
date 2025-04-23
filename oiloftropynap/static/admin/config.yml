@@ -7,6 +7,19 @@ media_folder: "oiloftropynap/static/uploads"
 public_folder: "/uploads"
 
 collections:
+  - name: "navbar"
+    label: "Navbar"
+    files:
+      - file: "oiloftropynap/data/navbar.yml"
+        label: "Navbar"
+        name: "navbar"
+        fields:
+          - label: "Links"
+            name: "links"
+            widget: "list"
+            fields:
+              - { label: "Text", name: "text", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
   - name: "pages"
     label: "Pages"
     files:
