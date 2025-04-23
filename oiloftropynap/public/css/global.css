@@ -13,6 +13,9 @@
   --off-yellow: #f4ffcc;
   --off-pink: #ffd9fe;
 }
+.text {
+  color: var(--off-yellow); 
+}
 
 body {
   font-family: system-ui, sans-serif;
