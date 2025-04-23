@@ -1,5 +1,5 @@
 backend:
-  name: git-gateway
+  name: test-repo
   branch: main
 
 media_folder: "static/uploads"
@@ -13,10 +13,6 @@ collections:
         label: "Home"
         name: "home"
         fields:
-          - { label: "Title", name: "title", widget: "string" }
-          - { label: "Date", name: "date", widget: "datetime" }
-          - { label: "Draft", name: "draft", widget: "boolean" }
-          - { label: "Custom CSS", name: "custom_css", widget: "string", required: false }
           - { label: "Body", name: "body", widget: "markdown" }
       - file: "content/about.html"
         label: "About"
