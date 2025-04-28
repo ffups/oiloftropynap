@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@payloadcms/richtext-lexical": "^3.35.1",
     "@sanity/client": "^6.29.1",
     "@sanity/visual-editing": "^2.13.18",
     "axios": "^1.9.0",
