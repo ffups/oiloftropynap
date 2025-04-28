@@ -20,5 +20,9 @@
 # Local Netlify folder
 .netlify
 
+# Environment files
+**/*.env
+**/*.env.*
+
 # webp conversion
 **/cwebp.exe
