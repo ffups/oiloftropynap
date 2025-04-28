@@ -1,3 +1,4 @@
+import LivePreview from "@/components/LivePreview";
 import RichTextEditor from "@/components/RichTextEditor";
 
 export default function NewPageEditor({
@@ -23,10 +24,7 @@ export default function NewPageEditor({
       />
       <RichTextEditor value={content} onChange={onContentChange} />
       <button onClick={onAdd}>Add Page</button>
-      <div style={{ marginTop: 12, border: "1px solid #eee", padding: 8 }}>
-        <strong>Live Preview:</strong>
-        <div dangerouslySetInnerHTML={{ __html: content }} />
-      </div>
+      <LivePreview html={content} />
     </div>
   );
 }

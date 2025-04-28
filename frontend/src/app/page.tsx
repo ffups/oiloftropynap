@@ -1,4 +1,6 @@
 "use client";
+
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -23,6 +25,9 @@ export default function Home() {
 
   return (
     <div>
+      <nav>
+        <Link href="/about">About</Link>
+      </nav>
       <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );

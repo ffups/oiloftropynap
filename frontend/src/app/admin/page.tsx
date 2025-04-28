@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import PageEditor from "@/components/PageEditor";
 import NewPageEditor from "@/components/NewPageEditor";
+import LivePreview from "@/components/LivePreview";
 
 type Page = {
     id: string;
@@ -77,10 +78,7 @@ export default function AdminPage() {
               onContentChange={setNewContent}
               onAdd={addPage}
             />
-            <div style={{ marginTop: 12, border: "1px solid #eee", padding: 8 }}>
-              <strong>Live Preview:</strong>
-              <div dangerouslySetInnerHTML={{ __html: editingContent }} />
-            </div>
+            <LivePreview html={editingContent} />
         </div>
     );
 }
