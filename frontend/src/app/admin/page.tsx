@@ -1,84 +1,33 @@
 "use client";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import PageEditor from "@/components/PageEditor";
-import NewPageEditor from "@/components/NewPageEditor";
-import LivePreview from "@/components/LivePreview";
-
-type Page = {
-    id: string;
-    title: string;
-    content: { html: string }; // content is an object with an html property
-};
+import { useState } from "react";
 
 export default function AdminPage() {
-    const [pages, setPages] = useState<Page[]>([]);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [editingContent, setEditingContent] = useState<string>("");
-    const [newTitle, setNewTitle] = useState("");
-    const [newContent, setNewContent] = useState("");
+  const [view, setView] = useState<"pages" | "add" | null>(null);
 
-    useEffect(() => {
-        supabase.from("pages").select("*").then(({ data }) => {
-            setPages(data || []);
-        });
-    }, []);
-
-    const startEdit = (page: Page) => {
-        setEditingId(page.id);
-        setEditingContent(page.content?.html || "");
-    };
-
-    const saveEdit = async (id: string) => {
-        await supabase.from("pages").update({ content: { html: editingContent } }).eq("id", id);
-        setPages(pages =>
-            pages.map(p => (p.id === id ? { ...p, content: { html: editingContent } } : p))
-        );
-        setEditingId(null);
-    };
-
-    const addPage = async () => {
-        if (!newTitle) return;
-        await supabase.from("pages").insert([
-            { title: newTitle, content: { html: newContent } }
-        ]);
-        const { data } = await supabase.from("pages").select("*");
-        setPages(data || []);
-        setNewTitle("");
-        setNewContent("");
-    };
-
-    return (
+  return (
+    <div>
+      <h1>Admin Panel</h1>
+      <nav style={{ marginBottom: 24 }}>
+        <button onClick={() => setView("pages")}>Manage Pages</button>
+        <button onClick={() => setView("add")}>Add New Page</button>
+      </nav>
+      {!view && (
         <div>
-            <h1>Admin Page Editor</h1>
-            <ul>
-                {pages.map(page => (
-                    <li key={page.id}>
-                        <h2>{page.title}</h2>
-                        {editingId === page.id ? (
-                            <PageEditor
-                                value={editingContent}
-                                onChange={setEditingContent}
-                                onSave={() => saveEdit(page.id)}
-                                onCancel={() => setEditingId(null)}
-                            />
-                        ) : (
-                            <div>
-                                <div dangerouslySetInnerHTML={{ __html: page.content?.html || "" }} />
-                                <button onClick={() => startEdit(page)}>Edit</button>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
-            <NewPageEditor
-              title={newTitle}
-              content={newContent}
-              onTitleChange={setNewTitle}
-              onContentChange={setNewContent}
-              onAdd={addPage}
-            />
-            <LivePreview html={editingContent} />
+          <p>Welcome to the admin panel. Choose an action above.</p>
         </div>
-    );
+      )}
+      {view === "pages" && (
+        <div>
+          {/* Replace with your actual PageList component */}
+          <p>Page management component goes here.</p>
+        </div>
+      )}
+      {view === "add" && (
+        <div>
+          {/* Replace with your actual NewPageEditor component */}
+          <p>New page editor component goes here.</p>
+        </div>
+      )}
+    </div>
+  );
 }
