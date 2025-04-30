@@ -22,23 +22,24 @@ export default function EditPage() {
   const editableRef = useRef<HTMLDivElement>(null);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
   const LOCAL_KEY = `page-edit-draft-${slug}`;
-  const [jsonEdit, setJsonEdit] = useState("");
+  const [htmlEdit, setHtmlEdit] = useState(
+    page?.content && isHtmlContent(page.content)
+      ? page.content.html
+      : typeof page?.content === "string"
+        ? page.content
+        : ""
+  );
 
-  // Sync jsonEdit with page state
   useEffect(() => {
-    setJsonEdit(JSON.stringify(page, null, 2));
+    setHtmlEdit(
+      page?.content && isHtmlContent(page.content)
+        ? page.content.html
+        : typeof page?.content === "string"
+          ? page.content
+          : ""
+    );
   }, [page]);
 
-  // Handler for when the user edits the JSON and blurs the textarea
-  const handleJsonBlur = () => {
-    try {
-      const parsed = JSON.parse(jsonEdit);
-      setPage(parsed);
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
-    } catch  {
-      alert("Invalid JSON!");
-    }
-  };
   useEffect(() => {
     const draft = localStorage.getItem(LOCAL_KEY);
     if (draft) {
@@ -101,56 +102,23 @@ export default function EditPage() {
   }, [page?.content]);
 
   // Save the current live content (plain text or HTML) to the database
-const handleContentSaveToDatabase = async () => {
-  if (!page) return;
-  setSaving(true);
-  const { error } = await supabase
-    .from("pages")
-    .update({ content: page.content })
-    .eq("slug", slug);
-  setSaving(false);
-  if (error) {
-    console.log("Failed to save content to database:", error);
-  } else {
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(page));
-    console.log("Live content saved to database successfully.");
-  }
-};
-
-// Save the JSON editor content to the database
-const handleJsonSaveToDatabase = async () => {
-  let parsed: Page | null = null;
-  try {
-    parsed = JSON.parse(jsonEdit);
-  } catch (e) {
-    if (e instanceof SyntaxError) {
-      alert(`Invalid JSON!\n${e.message}\n\nPlease check your JSON for errors.`);
-      console.log("Failed to parse JSON for database save:", e);
+  const handleContentSaveToDatabase = async () => {
+    if (!page) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("pages")
+      .update({ content: page.content })
+      .eq("slug", slug);
+    setSaving(false);
+    if (error) {
+      console.log("Failed to save content to database:", error);
     } else {
-      alert("Unknown error while parsing JSON.");
-      console.log("Unknown error while parsing JSON:", e);
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(page));
+      console.log("Live content saved to database successfully.");
     }
-    return;
-  }
-  if (!parsed) {
-    alert("Parsed JSON is null. Please check your input.");
-    console.log("Parsed JSON is null.");
-    return;
-  }
-  setSaving(true);
-  const { error } = await supabase
-    .from("pages")
-    .update({ content: parsed.content })
-    .eq("slug", slug);
-  setSaving(false);
-  if (error) {
-    console.log("Failed to save JSON to database:", error);
-  } else {
-    setPage(parsed);
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
-    console.log("JSON editor content saved to database successfully.");
-  }
-};
+  };
+
+
   if (loading) return <div>Loading...</div>;
   if (!page) return <div>Page not found.</div>;
 
@@ -201,25 +169,39 @@ const handleJsonSaveToDatabase = async () => {
       </div>
       <textarea
         style={{ width: "100%", minHeight: 120, fontFamily: "monospace", marginTop: 16 }}
-        value={jsonEdit}
+        value={htmlEdit}
         onChange={e => {
-          setJsonEdit(e.target.value);
-          try {
-            const parsed = JSON.parse(e.target.value);
-            setPage(parsed);
-            localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
-          } catch {
-            // Ignore invalid JSON while typing
-          }
+          setHtmlEdit(e.target.value);
+          // Update localStorage and page state as the user types
+          const newContent = { html: e.target.value };
+          setPage(prev => prev ? { ...prev, content: newContent } : prev);
+          localStorage.setItem(LOCAL_KEY, JSON.stringify({ ...page, content: newContent }));
         }}
-        onBlur={handleJsonBlur}
+        onBlur={() => {
+          // Optionally, validate HTML here
+        }}
       />
       <button
-        onClick={handleJsonSaveToDatabase}
+        onClick={async () => {
+          setSaving(true);
+          const { error } = await supabase
+            .from("pages")
+            .update({ content: { html: htmlEdit } })
+            .eq("slug", slug);
+          setSaving(false);
+          if (error) {
+            alert("Failed to save HTML to database.");
+            console.log("Failed to save HTML to database:", error);
+          } else {
+            setPage(prev => prev ? { ...prev, content: { html: htmlEdit } } : prev);
+            localStorage.setItem(LOCAL_KEY, JSON.stringify({ ...page, content: { html: htmlEdit } }));
+            console.log("HTML content saved to database successfully.");
+          }
+        }}
         disabled={saving || loading}
         style={{ marginTop: 8 }}
       >
-        {saving ? "Saving..." : "Save JSON to Database"}
+        {saving ? "Saving..." : "Save HTML to Database"}
       </button>
     </div>
   );
