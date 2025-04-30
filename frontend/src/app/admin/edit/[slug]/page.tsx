@@ -34,13 +34,11 @@ export default function EditPage() {
     try {
       const parsed = JSON.parse(jsonEdit);
       setPage(parsed);
-      // Optionally, update localStorage as well:
       localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
-    } catch (e) {
+    } catch  {
       alert("Invalid JSON!");
     }
   };
-
   useEffect(() => {
     const draft = localStorage.getItem(LOCAL_KEY);
     if (draft) {
@@ -97,17 +95,28 @@ export default function EditPage() {
 
   useEffect(() => {
     // Set the editable div's content when page loads/updates
-    if (isHtmlContent(page?.content) && editableRef.current) {
+    if (page?.content && isHtmlContent(page.content) && editableRef.current) {
       editableRef.current.innerHTML = page.content.html;
     }
   }, [page?.content]);
+
   const handleSaveToDatabase = async () => {
     let parsed: Page | null = null;
     try {
       parsed = JSON.parse(jsonEdit);
-    } catch {
-      alert("Invalid JSON! Please fix before saving.");
-      console.log("Failed to parse JSON for database save.");
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        alert(`Invalid JSON!\n${e.message}\n\nPlease check your JSON for errors.`);
+        console.log("Failed to parse JSON for database save:", e);
+      } else {
+        alert("Unknown error while parsing JSON.");
+        console.log("Unknown error while parsing JSON:", e);
+      }
+      return;
+    }
+    if (!parsed) {
+      alert("Parsed JSON is null. Please check your input.");
+      console.log("Parsed JSON is null.");
       return;
     }
     setSaving(true);
@@ -124,7 +133,6 @@ export default function EditPage() {
       console.log("Saved to database successfully.");
     }
   };
-
   if (loading) return <div>Loading...</div>;
   if (!page) return <div>Page not found.</div>;
 
@@ -139,8 +147,6 @@ export default function EditPage() {
           marginBottom: 24,
         }}
       >
-        <h3>Live Snapshot</h3>
-        <h4>{page.title}</h4>
         <button
           onClick={handleSaveToDatabase}
           disabled={saving || loading}
