@@ -36,7 +36,7 @@ export default function PageUmbrellaManagement() {
     return (
         <div>
             <h3>All Pages</h3>
-            <PageList pages={pages} />
+            <PageList pages={pages} onPageRemoved={fetchPages} />
             <button
                 onClick={() => setShowNewPageEditor(v => !v)}
             >
