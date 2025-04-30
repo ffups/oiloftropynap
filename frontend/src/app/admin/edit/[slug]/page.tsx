@@ -64,10 +64,15 @@ export default function EditPage() {
   // Save handler for plain text (to localStorage)
   const handleTextSave = (newContent: string) => {
     if (!page) return;
-    // Save to localStorage instead of DB
-    localStorage.setItem(LOCAL_KEY, JSON.stringify({ ...page, content: newContent }));
-    setPage({ ...page, content: newContent });
+    try {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify({ ...page, content: newContent }));
+      setPage({ ...page, content: newContent });
+      console.log("Saved to localStorage successfully.");
+    } catch (e) {
+      console.log("Failed to save to localStorage:", e);
+    }
   };
+
 
   // Debounced save for HTML content (to localStorage)
   const handleHtmlInput = () => {
@@ -78,13 +83,17 @@ export default function EditPage() {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
     debounceTimer.current = setTimeout(() => {
       if (html.trim().length === 0) {
-        // Validation: do not save empty content
         return;
       }
-      // Save to localStorage instead of DB
-      localStorage.setItem(LOCAL_KEY, JSON.stringify({ ...page, content: { html } }));
+      try {
+        localStorage.setItem(LOCAL_KEY, JSON.stringify({ ...page, content: { html } }));
+        console.log("Saved HTML to localStorage successfully.");
+      } catch (e) {
+        console.log("Failed to save HTML to localStorage:", e);
+      }
     }, 500);
   };
+
 
   useEffect(() => {
     // Set the editable div's content when page loads/updates
@@ -92,16 +101,28 @@ export default function EditPage() {
       editableRef.current.innerHTML = page.content.html;
     }
   }, [page?.content]);
-
   const handleSaveToDatabase = async () => {
-    if (!page) return;
+    let parsed: Page | null = null;
+    try {
+      parsed = JSON.parse(jsonEdit);
+    } catch {
+      alert("Invalid JSON! Please fix before saving.");
+      console.log("Failed to parse JSON for database save.");
+      return;
+    }
     setSaving(true);
-    // Save the current page state to the database
-    await supabase
+    const { error } = await supabase
       .from("pages")
-      .update({ content: page.content })
+      .update({ content: parsed.content })
       .eq("slug", slug);
     setSaving(false);
+    if (error) {
+      console.log("Failed to save to database:", error);
+    } else {
+      setPage(parsed);
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
+      console.log("Saved to database successfully.");
+    }
   };
 
   if (loading) return <div>Loading...</div>;
