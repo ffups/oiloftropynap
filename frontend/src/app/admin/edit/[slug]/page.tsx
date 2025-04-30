@@ -100,39 +100,57 @@ export default function EditPage() {
     }
   }, [page?.content]);
 
-  const handleSaveToDatabase = async () => {
-    let parsed: Page | null = null;
-    try {
-      parsed = JSON.parse(jsonEdit);
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        alert(`Invalid JSON!\n${e.message}\n\nPlease check your JSON for errors.`);
-        console.log("Failed to parse JSON for database save:", e);
-      } else {
-        alert("Unknown error while parsing JSON.");
-        console.log("Unknown error while parsing JSON:", e);
-      }
-      return;
-    }
-    if (!parsed) {
-      alert("Parsed JSON is null. Please check your input.");
-      console.log("Parsed JSON is null.");
-      return;
-    }
-    setSaving(true);
-    const { error } = await supabase
-      .from("pages")
-      .update({ content: parsed.content })
-      .eq("slug", slug);
-    setSaving(false);
-    if (error) {
-      console.log("Failed to save to database:", error);
+  // Save the current live content (plain text or HTML) to the database
+const handleContentSaveToDatabase = async () => {
+  if (!page) return;
+  setSaving(true);
+  const { error } = await supabase
+    .from("pages")
+    .update({ content: page.content })
+    .eq("slug", slug);
+  setSaving(false);
+  if (error) {
+    console.log("Failed to save content to database:", error);
+  } else {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(page));
+    console.log("Live content saved to database successfully.");
+  }
+};
+
+// Save the JSON editor content to the database
+const handleJsonSaveToDatabase = async () => {
+  let parsed: Page | null = null;
+  try {
+    parsed = JSON.parse(jsonEdit);
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      alert(`Invalid JSON!\n${e.message}\n\nPlease check your JSON for errors.`);
+      console.log("Failed to parse JSON for database save:", e);
     } else {
-      setPage(parsed);
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
-      console.log("Saved to database successfully.");
+      alert("Unknown error while parsing JSON.");
+      console.log("Unknown error while parsing JSON:", e);
     }
-  };
+    return;
+  }
+  if (!parsed) {
+    alert("Parsed JSON is null. Please check your input.");
+    console.log("Parsed JSON is null.");
+    return;
+  }
+  setSaving(true);
+  const { error } = await supabase
+    .from("pages")
+    .update({ content: parsed.content })
+    .eq("slug", slug);
+  setSaving(false);
+  if (error) {
+    console.log("Failed to save JSON to database:", error);
+  } else {
+    setPage(parsed);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
+    console.log("JSON editor content saved to database successfully.");
+  }
+};
   if (loading) return <div>Loading...</div>;
   if (!page) return <div>Page not found.</div>;
 
@@ -148,11 +166,11 @@ export default function EditPage() {
         }}
       >
         <button
-          onClick={handleSaveToDatabase}
+          onClick={handleContentSaveToDatabase}
           disabled={saving || loading}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 16, marginRight: 8 }}
         >
-          {saving ? "Saving..." : "Save to Database"}
+          {saving ? "Saving..." : "Save Live Content to Database"}
         </button>
         <div style={{ whiteSpace: "pre-wrap" }}>
           {typeof page.content === "string" ? (
@@ -186,7 +204,6 @@ export default function EditPage() {
         value={jsonEdit}
         onChange={e => {
           setJsonEdit(e.target.value);
-          // Try to update localStorage with valid JSON as the user types
           try {
             const parsed = JSON.parse(e.target.value);
             setPage(parsed);
@@ -197,6 +214,13 @@ export default function EditPage() {
         }}
         onBlur={handleJsonBlur}
       />
+      <button
+        onClick={handleJsonSaveToDatabase}
+        disabled={saving || loading}
+        style={{ marginTop: 8 }}
+      >
+        {saving ? "Saving..." : "Save JSON to Database"}
+      </button>
     </div>
   );
 }
