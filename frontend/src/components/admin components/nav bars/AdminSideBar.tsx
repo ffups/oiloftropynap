@@ -2,34 +2,29 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import RemovePageButton from "../PageEditor/RemovePageButton";
+import AddNewPage from "../PageEditor/AddNewPage";
 import { usePagesContext } from "@/context/PagesContext";
 
-export default function AdminSidebar() {
-  const [pages, setPages] = useState<{ id: string; title: string; slug: string }[]>([]);
+type Page = { id: string; title: string; slug: string };
+
+interface AdminSidebarProps {
+  pages: Page[];
+  fetchPages: () => void;
+}
+
+export default function AdminSidebar({ pages, fetchPages }: AdminSidebarProps) {
   const [pagesOpen, setPagesOpen] = useState(false);
   const pathname = usePathname();
+  const [showNewPageEditor, setShowNewPageEditor] = useState(false);
   const { lastRefresh } = usePagesContext();
 
   useEffect(() => {
-    if (pagesOpen) {
-      supabase
-        .from("pages")
-        .select("id, title, slug")
-        .then(({ data }) => {
-          if (data) setPages(data);
-        });
-    }
-  }, [pagesOpen, lastRefresh]);
+    fetchPages();
+  }, [lastRefresh, fetchPages]);
 
   return (
-    <aside
-      style={{
-        width: 200,
-        padding: 24,
-        borderRight: "1px solid #ddd",
-      }}
-    >
+    <aside style={{ width: 200, padding: 24, borderRight: "1px solid #ddd" }}>
       <nav>
         <ul style={{ listStyle: "none", padding: 0 }}>
           <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -78,12 +73,20 @@ export default function AdminSidebar() {
                     >
                       {page.title}
                     </Link>
+                    <RemovePageButton pageId={page.id} onPageRemoved={fetchPages} />
                   </li>
                 );
               })}
+              <button onClick={() => setShowNewPageEditor(v => !v)}>
+                {showNewPageEditor ? "hide" : "create ny page"}
+              </button>
+              {showNewPageEditor && (
+                <div style={{ marginBottom: 24 }}>
+                  <AddNewPage onPageAdded={fetchPages} />
+                </div>
+              )}
             </ul>
           )}
-          {/* Add more sidebar links as needed */}
         </ul>
       </nav>
     </aside>

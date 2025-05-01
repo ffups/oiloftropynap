@@ -29,7 +29,7 @@ export default function AddNewPage({
 
   const addPage = async () => {
     if (!title) {
-      alert("Please fill in the title.");
+      alert("title bitchhhh.");
       return;
     }
     setSubmitting(true);
@@ -56,13 +56,20 @@ export default function AddNewPage({
     ]);
     setSubmitting(false);
     if (error) {
-      alert("Error adding page: " + error.message);
+      if (
+        error.code === "23505" || // Postgres unique_violation
+        (error.message && error.message.toLowerCase().includes("duplicate"))
+      ) {
+        alert("you cant be having two of the same names now can ya.");
+      } else {
+        alert("something broke:" + error.message);
+      }
       return;
     }
+    setSuccess("It was not a complete failure!");
     setTitle("");
-    setSuccess("Page added successfully!");
-    refreshPages();
     if (onPageAdded) onPageAdded();
+    refreshPages();
   };
 
   return (
@@ -75,7 +82,7 @@ export default function AddNewPage({
         disabled={submitting}
       />
       <button onClick={addPage} disabled={submitting}>
-        {submitting ? "Adding..." : "Add Page"}
+        {submitting ? "Adding..." : "Add "}
       </button>
       {success && <div style={{ color: "green", marginTop: 8 }}>{success}</div>}
     </div>

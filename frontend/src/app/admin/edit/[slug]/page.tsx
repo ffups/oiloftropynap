@@ -2,16 +2,9 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import Sidebar from "@/components/admin components/PageUmbrellaManagement/SidebarEditor/SidebarEditor";
-import SectionsList from "@/components/admin components/PageUmbrellaManagement/SidebarEditor/SectionsList";
-
-type Block =
-  | { id: string; type: "text"; data: { text: string } }
-  | { id: string; type: "image"; data: { url: string; alt?: string } };
-// Add more block types as needed
-
-type Section = { id: string; name: string; blocks: Block[] };
-
+import Sidebar from "@/components/admin components/PageEditor/SidebarEditor/SidebarInEditor";
+import SectionsList from "@/components/admin components/PageEditor/SidebarEditor/SectionsDisplay";
+import type {  Section } from "@/types/blocks"; // <-- Use shared types
 
 type PageContent = string | { html: string } | { sections: Section[] };
 interface Page {

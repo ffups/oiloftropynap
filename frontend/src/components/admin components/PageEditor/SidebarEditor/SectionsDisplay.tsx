@@ -2,12 +2,12 @@ import React from "react";
 import type { Block, Section } from "@/types/blocks";
 import { blockRegistry } from "@/components/utilities/blocks/blockRegistry";
 
-interface SectionsListProps {
+interface SectionsDisplayProps {
   sections: Section[];
   sectionRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
 }
 
-export default function SectionsList({ sections, sectionRefs }: SectionsListProps) {
+export default function SectionsDisplay({ sections, sectionRefs }: SectionsDisplayProps) {
   return (
     <div style={{ marginTop: 16 }}>
       <div>
@@ -20,7 +20,6 @@ export default function SectionsList({ sections, sectionRefs }: SectionsListProp
               }}
               style={{ marginBottom: 32, padding: 8, border: "1px solid #eee", borderRadius: 4 }}
             >
-              <h3>{section.name}</h3>
               {section.blocks.map((block: Block) => {
                 const renderer = blockRegistry[block.type];
                 if (renderer) return renderer(block);
