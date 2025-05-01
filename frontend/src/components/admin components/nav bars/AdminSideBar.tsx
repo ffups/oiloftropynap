@@ -32,55 +32,57 @@ export default function AdminSidebar() {
     >
       <nav>
         <ul style={{ listStyle: "none", padding: 0 }}>
-          <li>
+          <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Link
+              href="/admin/manage-pages"
+              style={{
+                fontWeight: pathname === "/admin/manage-pages" ? "bold" : "normal",
+                color: pathname === "/admin/manage-pages" ? "#1976d2" : undefined,
+                textDecoration: "none",
+                flex: 1,
+              }}
+            >
+              Manage Pages
+            </Link>
             <button
               type="button"
               style={{
-                width: "100%",
-                textAlign: "left",
                 background: "none",
                 border: "none",
                 padding: 0,
                 font: "inherit",
                 cursor: "pointer",
+                fontSize: "1.1em",
+                lineHeight: 1,
               }}
+              aria-label={pagesOpen ? "Hide page list" : "Show page list"}
               onClick={() => setPagesOpen(v => !v)}
             >
-              Manage Pages {pagesOpen ? "▲" : "▼"}
+              {pagesOpen ? "▲" : "▼"}
             </button>
-            {pagesOpen && (
-              <ul style={{ listStyle: "none", paddingLeft: 16, marginTop: 8 }}>
-                <li>
-                  <Link
-                    href="/admin/manage-pages"
-                    style={{
-                      fontWeight: pathname === "/admin/manage-pages" ? "bold" : "normal",
-                      color: pathname === "/admin/manage-pages" ? "#1976d2" : undefined,
-                    }}
-                  >
-                    All Pages
-                  </Link>
-                </li>
-                {pages.map(page => {
-                  const pagePath = `/admin/edit/${page.slug}`;
-                  const selected = pathname === pagePath;
-                  return (
-                    <li key={page.id}>
-                      <Link
-                        href={pagePath}
-                        style={{
-                          fontWeight: selected ? "bold" : "normal",
-                          color: selected ? "#1976d2" : undefined,
-                        }}
-                      >
-                        {page.title}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
           </li>
+          {pagesOpen && (
+            <ul style={{ listStyle: "none", paddingLeft: 16, marginTop: 8 }}>
+              {pages.map(page => {
+                const pagePath = `/admin/edit/${page.slug}`;
+                const selected = pathname === pagePath;
+                return (
+                  <li key={page.id}>
+                    <Link
+                      href={pagePath}
+                      style={{
+                        fontWeight: selected ? "bold" : "normal",
+                        color: selected ? "#1976d2" : undefined,
+                        textDecoration: "none",
+                      }}
+                    >
+                      {page.title}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           {/* Add more sidebar links as needed */}
         </ul>
       </nav>
