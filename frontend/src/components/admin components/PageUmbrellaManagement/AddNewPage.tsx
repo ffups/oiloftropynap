@@ -1,31 +1,38 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import LivePreview from "@/components/utilities/LivePreview";
-import RichTextEditor from "@/components/utilities/RichTextEditor";
+import { usePagesContext } from "@/context/PagesContext";
+
+function slugify(text: string) {
+  return text
+    .toString()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 export default function AddNewPage({
   title,
-  slug,
   content,
   onTitleChange,
-  onSlugChange,
   onContentChange,
   onPageAdded,
 }: {
   title: string;
-  slug: string;
   content: string;
   onTitleChange: (v: string) => void;
-  onSlugChange: (v: string) => void;
   onContentChange: (v: string) => void;
   onPageAdded?: () => void;
 }) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
+  const { refreshPages } = usePagesContext();
 
   const addPage = async () => {
-    if (!title || !slug) {
-      alert("Please fill in the title and slug.");
+    if (!title) {
+      alert("Please fill in the title.");
       return;
     }
     setSubmitting(true);
@@ -33,6 +40,7 @@ export default function AddNewPage({
 
     // Always create one section, even if content is empty
     const sections = [{ id: "section1", html: content ?? "" }];
+    const slug = slugify(title); // Use slugify here
 
     const { error } = await supabase.from("pages").insert([
       {
@@ -48,9 +56,9 @@ export default function AddNewPage({
     }
     // Clear fields
     onTitleChange("");
-    onSlugChange("");
     onContentChange("");
     setSuccess("Page added successfully!");
+    refreshPages();
     if (onPageAdded) onPageAdded();
   };
 
@@ -63,19 +71,10 @@ export default function AddNewPage({
         placeholder="Title"
         disabled={submitting}
       />
-      <input
-        value={slug}
-        onChange={e => onSlugChange(e.target.value)}
-        placeholder="Slug (e.g. about, contact)"
-        style={{ marginLeft: 8 }}
-        disabled={submitting}
-      />
-      <RichTextEditor value={content} onChange={onContentChange} />
       <button onClick={addPage} disabled={submitting}>
         {submitting ? "Adding..." : "Add Page"}
       </button>
       {success && <div style={{ color: "green", marginTop: 8 }}>{success}</div>}
-      <LivePreview html={content} />
     </div>
   );
 }

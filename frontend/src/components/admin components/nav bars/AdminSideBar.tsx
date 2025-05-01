@@ -3,11 +3,13 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { usePagesContext } from "@/context/PagesContext";
 
 export default function AdminSidebar() {
   const [pages, setPages] = useState<{ id: string; title: string; slug: string }[]>([]);
   const [pagesOpen, setPagesOpen] = useState(false);
   const pathname = usePathname();
+  const { lastRefresh } = usePagesContext();
 
   useEffect(() => {
     if (pagesOpen) {
@@ -18,7 +20,7 @@ export default function AdminSidebar() {
           if (data) setPages(data);
         });
     }
-  }, [pagesOpen]);
+  }, [pagesOpen, lastRefresh]);
 
   return (
     <aside

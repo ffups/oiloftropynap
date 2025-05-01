@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import { PagesProvider } from "@/context/PagesContext";
 
 export const metadata: Metadata = {
   title: "panys profiterols",
@@ -14,8 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body >
-        {children}
+      <body>
+        <PagesProvider>{children}</PagesProvider>
       </body>
     </html>
   );
