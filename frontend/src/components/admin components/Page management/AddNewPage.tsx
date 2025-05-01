@@ -24,24 +24,21 @@ export default function AddNewPage({
   const [success, setSuccess] = useState<string | null>(null);
 
   const addPage = async () => {
-    if (!title || !slug || !content) {
-      alert("Please fill in all fields.");
+    if (!title || !slug) {
+      alert("Please fill in the title and slug.");
       return;
     }
     setSubmitting(true);
     setSuccess(null);
+
+    // Always create one section, even if content is empty
+    const sections = [{ id: "section1", html: content ?? "" }];
+
     const { error } = await supabase.from("pages").insert([
       {
         title,
         slug,
-        content: {
-          sections: [
-            {
-              id: "section1",
-              html: content,
-            },
-          ],
-        },
+        content: { sections },
       },
     ]);
     setSubmitting(false);
