@@ -1,10 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import Link from "next/link";
 import RemovePageButton from "./RemovePageButton";
 import AddNewPage from "./AddNewPage";
-import { supabase } from "@/lib/supabaseClient";
-import { usePagesContext } from "@/context/PagesContext";
 
 type Page = {
   id: string;
@@ -13,15 +11,15 @@ type Page = {
   updated_at?: string;
 };
 
-export default function PageList() {
-  const [pages, setPages] = useState<Page[]>([]);
-  const { lastRefresh } = usePagesContext();
+interface PageListProps {
+  pages: Page[];
+  fetchPages: () => Promise<void>;
+}
+
+export default function PageList({ pages = [], fetchPages }: PageListProps) {
   const [showNewPageEditor, setShowNewPageEditor] = useState(false);
 
-  useEffect(() => {
-    supabase.from("pages").select("id, title, slug").then(({ data }) => setPages(data || []));
-  }, [lastRefresh]);
-
+  
   return (
     <ul>
       {pages.map(page => (
@@ -40,7 +38,7 @@ export default function PageList() {
               Updated: {new Date(page.updated_at).toLocaleDateString()}
             </span>
           )}
-          <RemovePageButton pageId={page.id} onPageRemoved={() => setPages(pages.filter(p => p.id !== page.id))} />
+          <RemovePageButton pageId={page.id} onPageRemoved={() => fetchPages()} />
         </li>
       ))}
       <button onClick={() => setShowNewPageEditor(v => !v)}>
@@ -48,7 +46,7 @@ export default function PageList() {
       </button>
       {showNewPageEditor && (
         <div style={{ marginBottom: 24 }}>
-          <AddNewPage onPageAdded={() => setPages([...pages])} />
+          <AddNewPage onPageAdded={() => fetchPages()} />
         </div>
       )}
     </ul>
