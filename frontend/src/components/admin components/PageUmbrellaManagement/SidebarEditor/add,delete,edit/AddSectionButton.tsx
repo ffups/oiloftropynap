@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-
-type Section = { id: string; html: string };
+import type {  Section } from "@/types/blocks";
 
 interface AddSectionButtonProps {
   pageSlug: string;
@@ -29,8 +28,7 @@ export default function AddSectionButton({ pageSlug, sections, onSectionAdded }:
       return;
     }
     setAdding(true);
-    const newSection: Section = { id: sectionName.trim(), html: "" };
-    const updatedSections = [...sections, newSection];
+    const newSection: Section = { id: sectionName.trim(), name: sectionName.trim(), blocks: [] };    const updatedSections = [...sections, newSection];
 
     const { error } = await supabase
       .from("pages")

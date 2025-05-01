@@ -19,8 +19,6 @@ export default function PageList({
   fetchPages: () => void; // <-- add this line
 }) {
   const [showNewPageEditor, setShowNewPageEditor] = useState(false);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
 
   return (
     <ul>
@@ -49,10 +47,6 @@ export default function PageList({
       {showNewPageEditor && (
         <div style={{ marginBottom: 24 }}>
           <AddNewPage
-            title={title}
-            content={content}
-            onTitleChange={setTitle}
-            onContentChange={setContent}
             onPageAdded={fetchPages}
           />
         </div>

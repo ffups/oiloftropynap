@@ -2,7 +2,8 @@ import React from "react";
 import AddSectionButton from "./add,delete,edit/AddSectionButton";
 import DeleteSectionButton from "./add,delete,edit/DeleteSectionButton";
 import EditSectionNameButton from "./add,delete,edit/EditSectionName";
-type Section = { id: string; html: string };
+import type {  Section } from "@/types/blocks";
+
 
 interface SidebarProps {
   title: string;
@@ -50,15 +51,20 @@ export default function Sidebar({ title, sections, sectionRefs, pageSlug, onSect
                 overflow: "hidden",
                 textOverflow: "ellipsis"
               }}>
-                {section.html.replace(/<[^>]+>/g, "").slice(0, 40) || "<empty>"}
+                {
+                  // Find first text block for preview, or show "<empty>"
+                  section.blocks.find(b => b.type === "text")
+                    ? (section.blocks.find(b => b.type === "text") as { data: { text: string } }).data.text.slice(0, 40)
+                    : "<empty>"
+                }
               </div>
             </button>
             <EditSectionNameButton
-  sectionId={section.id}
-  sections={sections}
-  pageSlug={pageSlug}
-  onSectionRenamed={onSectionsChange}
-/>
+              sectionId={section.id}
+              sections={sections}
+              pageSlug={pageSlug}
+              onSectionRenamed={onSectionsChange}
+            />
             <DeleteSectionButton
               sectionId={section.id}
               sections={sections}

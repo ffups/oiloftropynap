@@ -2,30 +2,19 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { blockRegistry } from "@/components/utilities/blocks/blockRegistry";
 
 type Block =
-  | { id: string; type: "text"; data: { text: string } }
+| { id: string; type: "text"; data: { text: string } }
   | { id: string; type: "image"; data: { url: string; alt?: string } };
 // Add more block types as needed
 
 type Section = { id: string; name: string; blocks: Block[] };
 
 function renderBlock(block: Block) {
-  switch (block.type) {
-    case "text":
-      return <p key={block.id}>{block.data.text}</p>;
-    case "image":
-      return (
-        <img
-          key={block.id}
-          src={block.data.url}
-          alt={block.data.alt || ""}
-          style={{ maxWidth: "100%" }}
-        />
-      );
-    default:
-      return <div key={block.id}>Unknown block type: {block.type}</div>;
-  }
+  const renderer = blockRegistry[block.type];
+  if (renderer) return renderer(block);
+  return <div key={block.id}>Unknown block type: {block.type}</div>;
 }
 
 export default function DynamicPage() {

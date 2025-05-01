@@ -1,6 +1,6 @@
 import React from "react";
-
-type Section = { id: string; html: string };
+import type { Block, Section } from "@/types/blocks";
+import { blockRegistry } from "@/components/utilities/blocks/blockRegistry";
 
 interface SectionsListProps {
   sections: Section[];
@@ -20,7 +20,12 @@ export default function SectionsList({ sections, sectionRefs }: SectionsListProp
               }}
               style={{ marginBottom: 32, padding: 8, border: "1px solid #eee", borderRadius: 4 }}
             >
-              <div dangerouslySetInnerHTML={{ __html: section.html }} />
+              <h3>{section.name}</h3>
+              {section.blocks.map((block: Block) => {
+                const renderer = blockRegistry[block.type];
+                if (renderer) return renderer(block);
+                return <div key={block.id}>Unknown block type: {block.type}</div>;
+              })}
             </div>
           ))
         ) : (
