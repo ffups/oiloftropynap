@@ -3,7 +3,30 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-type Section = { id: string; html: string };
+type Block =
+  | { id: string; type: "text"; data: { text: string } }
+  | { id: string; type: "image"; data: { url: string; alt?: string } };
+// Add more block types as needed
+
+type Section = { id: string; name: string; blocks: Block[] };
+
+function renderBlock(block: Block) {
+  switch (block.type) {
+    case "text":
+      return <p key={block.id}>{block.data.text}</p>;
+    case "image":
+      return (
+        <img
+          key={block.id}
+          src={block.data.url}
+          alt={block.data.alt || ""}
+          style={{ maxWidth: "100%" }}
+        />
+      );
+    default:
+      return <div key={block.id}>Unknown block type: {block.type}</div>;
+  }
+}
 
 export default function DynamicPage() {
   const { slug } = useParams();
@@ -16,10 +39,10 @@ export default function DynamicPage() {
       .from("pages")
       .select("content")
       .eq("slug", slug)
-      .single()
+      .single<{ content: { sections: Section[] } }>() // <-- Add this generic
       .then(({ data }) => {
         if (data?.content?.sections && Array.isArray(data.content.sections)) {
-          setSections(data.content.sections);
+          setSections(data.content.sections as Section[]); // <-- Add this assertion
         } else {
           setNotFound(true);
         }
@@ -33,7 +56,9 @@ export default function DynamicPage() {
   return (
     <div>
       {sections.map(section => (
-        <div key={section.id} dangerouslySetInnerHTML={{ __html: section.html }} />
+        <div key={section.id}>
+          {section.blocks.map(renderBlock)}
+        </div>
       ))}
     </div>
   );

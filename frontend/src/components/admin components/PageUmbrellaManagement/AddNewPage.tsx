@@ -2,6 +2,10 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { usePagesContext } from "@/context/PagesContext";
 
+// Block and Section types
+type Block = { id: string; type: string; data: Record<string, unknown> };
+type Section = { id: string; name: string; blocks: Block[] };
+
 function slugify(text: string) {
   return text
     .toString()
@@ -14,18 +18,11 @@ function slugify(text: string) {
 }
 
 export default function AddNewPage({
-  title,
-  content,
-  onTitleChange,
-  onContentChange,
   onPageAdded,
 }: {
-  title: string;
-  content: string;
-  onTitleChange: (v: string) => void;
-  onContentChange: (v: string) => void;
   onPageAdded?: () => void;
 }) {
+  const [title, setTitle] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const { refreshPages } = usePagesContext();
@@ -38,9 +35,17 @@ export default function AddNewPage({
     setSubmitting(true);
     setSuccess(null);
 
-    // Always create one section, even if content is empty
-    const sections = [{ id: "section1", html: content ?? "" }];
-    const slug = slugify(title); // Use slugify here
+    // Default section and block values
+    const sections: Section[] = [
+      {
+        id: "section1",
+        name: "Main Section",
+        blocks: [
+          { id: "block1", type: "text", data: { text: "Welcome to your new page!" } }
+        ]
+      }
+    ];
+    const slug = slugify(title);
 
     const { error } = await supabase.from("pages").insert([
       {
@@ -54,9 +59,7 @@ export default function AddNewPage({
       alert("Error adding page: " + error.message);
       return;
     }
-    // Clear fields
-    onTitleChange("");
-    onContentChange("");
+    setTitle("");
     setSuccess("Page added successfully!");
     refreshPages();
     if (onPageAdded) onPageAdded();
@@ -67,7 +70,7 @@ export default function AddNewPage({
       <h2>Add New Page</h2>
       <input
         value={title}
-        onChange={e => onTitleChange(e.target.value)}
+        onChange={e => setTitle(e.target.value)}
         placeholder="Title"
         disabled={submitting}
       />
